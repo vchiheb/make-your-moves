@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/make-your-moves/static/css/main.73bcf2e4.css",
+    "main.js": "/make-your-moves/static/js/main.ee7bfc9b.js",
+    "static/js/453.fcce012b.chunk.js": "/make-your-moves/static/js/453.fcce012b.chunk.js",
+    "index.html": "/make-your-moves/index.html",
+    "main.73bcf2e4.css.map": "/make-your-moves/static/css/main.73bcf2e4.css.map",
+    "main.ee7bfc9b.js.map": "/make-your-moves/static/js/main.ee7bfc9b.js.map",
+    "453.fcce012b.chunk.js.map": "/make-your-moves/static/js/453.fcce012b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.73bcf2e4.css",
+    "static/js/main.ee7bfc9b.js"
+  ]
+}
