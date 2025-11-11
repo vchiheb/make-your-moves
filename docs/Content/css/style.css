@@ -1,0 +1,259 @@
+@import url("https://fonts.googleapis.com/css?family=Muli&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Limelight&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+html,
+body {
+  font-family: sans-serif;
+  font-size: 18px;
+  background-color: #ece7e1;
+  font-family: "Muli", sans-serif;
+}
+
+footer {
+  text-align: center;
+}
+
+nav {
+  background-color: #ece7e1;
+  margin: auto auto;
+  text-align: center;
+  color: black;
+  font-family: "Limelight", sans-serif;
+  font-size: 2em;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+nav ul a {
+  color: gray;
+}
+
+.slide-navigation {
+  font-size: 2rem;
+  _height: 200px;
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  top: 40%;
+  background-color: transparent;
+}
+
+.nav-next {
+  right: 0px;
+}
+
+.slide-navigation i {
+  font-size: 5rem;
+  color: white;
+}
+
+h1 {
+  font-size: 1em;
+  color: black;
+}
+
+h2 {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.25em;
+  font-weight: 800;
+}
+
+.btn {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.brand-logo img {
+  max-height: 30px;
+  vertical-align: middle;
+}
+
+section {
+  margin-top: 0px;
+}
+
+.credit {
+  color: red;
+  font-size: 0.8em;
+  color: #777;
+  display: block;
+  margin-top: 5px;
+  z-index: 500;
+  position: absolute;
+  _right: 20px;
+  left: 15px;
+  top: 7px;
+}
+
+.card-action {
+  padding-bottom: 50px !important;
+}
+
+.card-action img {
+  max-height: 235px;
+}
+
+.card.border {
+  border: 1px solid lightgray;
+  margin: 0;
+  padding: 0;
+  max-height: 235px;
+}
+
+.card-content {
+  align-content: center;
+}
+
+.card .card-action a {
+  color: black !important;
+  text-transform: none !important;
+}
+
+.card .card-action {
+  padding-top: 25px;
+  padding-bottom: 0px;
+}
+
+.source-title {
+  font-weight: bold;
+  padding-bottom: 10px;
+  font-size: 1.25rem;
+}
+
+.source-content {
+  font-size: 1.1rem;
+}
+
+.source-wiki img {
+  max-height: 17px;
+}
+
+.row.source-wiki {
+  margin-top: 10px;
+  margin-left: 0px;
+}
+
+.credit-wiki span {
+  padding-left: 10px !important;
+  color: gray;
+}
+
+img.placeholder {
+  max-height: 150px;
+  margin-left: 30px;
+}
+
+.card.horizontal {
+  align-items: center;
+}
+
+.module-thumbnail {
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 300px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.module-header {
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 600px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.card-container {
+  width: 100%; /* Adjust as needed */
+  height: 300px; /* Adjust as needed */
+  perspective: 1000px; /* Creates the 3D perspective */
+  background-color: #ece7e1;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d; /* Preserves 3D transformations for child elements */
+  transition: transform 0.6s; /* Smooth transition for the flip */
+  background-color: #ece7e1;
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* Hides the back face of the element when not facing the user */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 10px;
+}
+
+.card-front {
+  background-color: #f0f0f0;
+}
+
+.card-back {
+  background-color: #e0e0e0;
+  transform: rotateY(180deg); /* Initially rotate the back face to be hidden */
+}
+
+/* Class to trigger the flip */
+.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+@media only screen and (max-width: 480px) {
+  .module-thumbnail {
+    min-height: 200px;
+  }
+
+  .module-header {
+    min-height: 300px;
+  }
+  h1 {
+    font-size: 0.7em;
+  }
+  h2 {
+    font-size: 1rem;
+    padding-bottom: 0px;
+    top: 30px;
+  }
+
+  body {
+    font-size: 12pt;
+  }
+
+  .slide-navigation i {
+    font-size: 2.25rem;
+  }
+
+  .card-title {
+    top: 90px;
+  }
+
+  .card-container {
+    height: 100px; /* Adjust as needed */
+    font-size: 1em;
+    height: 300px;
+  }
+}
+
+@media only screen and (min-width: 993px) {
+  .container {
+    width: 80%;
+  }
+
+  .brand-logo img {
+    height: 50px;
+  }
+}

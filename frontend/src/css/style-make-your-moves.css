@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css?family=Muli&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Limelight&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+html,
+body {
+  font-family: sans-serif;
+  font-size: 18px;
+  background-color: #ece7e1;
+  font-family: "Muli", sans-serif;
+}
+
+footer {
+  text-align: center;
+}
+
+header {
+  min-height: 100px;
+  padding-top: 20px;
+}
+
+nav {
+  background-color: #ece7e1;
+  margin: auto auto;
+  text-align: center;
+  color: black;
+  font-family: "Limelight", sans-serif;
+  font-size: 2em;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+nav h1 {
+  margin: 0;
+  padding: 0;
+}
+
+article {
+  margin-top: 30px;
+}
+
+.card-image .credit {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  font-size: 0.5rem;
+}
+
+.card-image .credit a {
+  color: #ece7e1;
+}
+
+/* drawer styling */
+
+.projects-toolbar {
+  position: fixed;
+  top: 120px;
+  right: 10px;
+  z-index: 2000;
+}
+
+.project-toolbar {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+.project-content-toolbar {
+  position: absolute;
+  bottom: 100px;
+  right: 20px;
+}
+
+.projects-drawer {
+  height: 100vh;
+  background-color: #ece7e1;
+  _margin-top: 20px;
+  padding-top: 20px;
+}
+
+.schedule-drawer {
+  padding-top: 50px;
+}
+
+.projects-drawer-toolbar {
+  position: absolute;
+  right: 20px;
+}
+
+/* form styling */
+
+input {
+  padding-left: 10px !important;
+}
+
+@media only screen and (max-width: 480px) {
+  h1 {
+    font-size: 1.25em;
+  }
+
+  section {
+    margin-top: 0px;
+    padding-top: 0px;
+  }
+
+  main {
+    padding: 0;
+    margin: 0;
+  }
+}

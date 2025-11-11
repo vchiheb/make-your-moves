@@ -1,0 +1,22 @@
+
+#give this script one command line argument: the name of the html file you wish to create
+
+#new xml file
+
+
+xml='../docs/Content/xml/';
+xml+=$1;
+xml+='.xml';
+
+#new html file
+html='../docs/Content/html/';
+html+=$1;
+html+='.html';
+
+#xml is the stuff that needs to go into <head> like title and description
+
+cp ../docs/Content/xml/Default.xml $xml
+touch $html
+
+echo ./build-page $1 >> ./build-site
+echo "<article></article>" >> $html

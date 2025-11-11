@@ -1,0 +1,134 @@
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+
+import { useUpdateProjectTaskListMutation } from "../../slices/projectApiSlice";
+import { saveTaskConfig } from "../../slices/projectSlice";
+import { current } from "@reduxjs/toolkit";
+
+import Drawer from "@mui/material/Drawer";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import InputLabel from "@mui/material/InputLabel";
+
+import ProjectsDrawerToolbar from "../toolbars/ProjectsDrawerToolbar";
+import SubmitButton from "../UI/SubmitButton";
+
+export default function TaskDrawer({
+  open,
+  handleCloseDrawer,
+  projectId,
+  taskId,
+  currentTask,
+  project,
+  saveTaskList,
+}) {
+  const dispatch = useDispatch();
+
+  const [updateProjectTaskList, { isLoading2, error2 }] =
+    useUpdateProjectTaskListMutation();
+
+  const [title, setTitle] = useState(currentTask.title);
+  const [duration, setDuration] = useState(currentTask.duration);
+  const [actualDuration, setActualDuration] = useState(
+    currentTask.actualDuration
+  );
+  const [notes, setNotes] = useState(currentTask.notes);
+
+  function handleSaveTaskConfig() {
+    const updatedTask = {
+      _id: taskId,
+      title,
+      duration,
+      notes,
+      actualDuration,
+    };
+
+    const payload = { projectId, updatedTask };
+    console.log("saving goal config: ", updatedTask);
+
+    dispatch(saveTaskConfig(payload));
+    saveTaskList(projectId, updatedTask);
+    handleCloseDrawer();
+  }
+  return (
+    <>
+      {currentTask && (
+        <div>
+          <Drawer anchor="top" open={open} transitionDuration={800}>
+            <ProjectsDrawerToolbar handleCloseDrawer={handleCloseDrawer} />
+            <div className="projects-drawer">
+              <div className="container">
+                Configure Task
+                <div style={{ width: "100%" }}>
+                  <Box
+                    component="div"
+                    sx={{ "& > :not(style)": { m: 1, width: "100%" } }}
+                    noValidate
+                    autoComplete="off"
+                    fullwidth="true"
+                  >
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <div style={{ flex: "2" }}>
+                        <TextField
+                          label="Task Title"
+                          variant="outlined"
+                          fullwidth="true"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          sx={{ width: "100%" }}
+                        />
+                      </div>
+
+                      <div style={{ flex: "1" }}>
+                        <TextField
+                          label="Expected Duration in Minutes"
+                          variant="outlined"
+                          fullwidth="true"
+                          type="number"
+                          sx={{ width: "100%" }}
+                          inputProps={{ min: 1 }}
+                          value={duration}
+                          onChange={(e) => setDuration(e.target.value)}
+                        />
+                      </div>
+
+                      <div style={{ flex: "1" }}>
+                        <TextField
+                          label="Actual Duration in Minutes"
+                          variant="outlined"
+                          fullwidth="true"
+                          type="number"
+                          sx={{ width: "100%" }}
+                          inputProps={{ min: 1 }}
+                          value={actualDuration}
+                          onChange={(e) => setActualDuration(e.target.value)}
+                        />
+                      </div>
+                      <div style={{ flex: "2" }}>
+                        <InputLabel>Notes</InputLabel>
+                        <TextareaAutosize
+                          minRows={3}
+                          variant="outlined"
+                          fullWidth
+                          type="text"
+                          margin="normal"
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          style={{ borderRadius: "3px" }}
+                        />
+                      </div>
+                      <SubmitButton onClick={handleSaveTaskConfig}>
+                        Save
+                      </SubmitButton>
+                    </div>
+                  </Box>
+                </div>
+              </div>
+            </div>
+          </Drawer>
+        </div>
+      )}
+    </>
+  );
+}
