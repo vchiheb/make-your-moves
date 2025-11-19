@@ -1,67 +1,85 @@
-import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
+import { useContext } from "react";
+import { ProjectsContext } from "../../context/projects-context";
+
 import AddIcon from "@mui/icons-material/Add";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useState } from "react";
 
-export default function ProjectsToolbar({
-  handleCreateNewProject,
-  handleTrackTime,
-  handleSchedule,
-  handleTasks,
-  handleBuildSchedule,
-}) {
+export default function ProjectsToolbar() {
+  const {
+    handleCreateNewProject,
+    handleSchedule,
+    handleOpenTasksDrawer,
+    handleBuildSchedule,
+  } = useContext(ProjectsContext);
+
+  const [displayMenu, setDisplayMenu] = useState(false);
   return (
     <>
-      <div className="projects-toolbar">
-        <Box
-          sx={{
-            "& > :not(style)": {
-              m: 1,
+      <div
+        style={{
+          position: "relative",
+          right: "0px",
+          width: "35px",
+          cursor: "pointer",
+        }}
+        onMouseEnter={() => setDisplayMenu(true)}
+        onMouseLeave={() => setDisplayMenu(false)}
+        onClick={() => setDisplayMenu(!displayMenu)}
+      >
+        {displayMenu && (
+          <div
+            className="_projects-toolbar"
+            style={{
+              position: "absolute",
+              zIndex: "1000",
               display: "flex",
-              alignItems: "center",
-              width: "175px",
-            },
-          }}
-        >
-          <Fab
-            variant="extended"
-            size="small"
-            color="primary"
-            onClick={handleCreateNewProject}
+              flexDirection: "row",
+              left: "30px",
+            }}
           >
-            <AddIcon sx={{ mr: 1 }} />
-            New Project
-          </Fab>
-          <Fab
-            variant="extended"
-            size="small"
-            color="primary"
-            onClick={handleSchedule}
-          >
-            <CalendarTodayIcon sx={{ mr: 1 }} />
-            Schedule
-          </Fab>
-          <Fab
-            variant="extended"
-            size="small"
-            color="primary"
-            onClick={handleTasks}
-          >
-            <AssignmentIcon sx={{ mr: 1 }} />
-            Tasks
-          </Fab>
-          <Fab
-            variant="extended"
-            size="small"
-            color="primary"
-            onClick={handleBuildSchedule}
-          >
-            <ScheduleIcon sx={{ mr: 1 }} />
-            Build Schedule
-          </Fab>
-        </Box>
+            <div
+              variant="extended"
+              title="New Project"
+              size="small"
+              color="primary"
+              onClick={handleCreateNewProject}
+            >
+              <AddIcon sx={{ mr: 1 }} />
+            </div>
+            <div
+              variant="extended"
+              size="small"
+              color="primary"
+              title="Tasks"
+              onClick={handleOpenTasksDrawer}
+            >
+              <AssignmentIcon sx={{ mr: 1 }} />
+            </div>
+            <div
+              variant="extended"
+              size="small"
+              color="primary"
+              title="Build Schedule"
+              onClick={handleBuildSchedule}
+            >
+              <ScheduleIcon sx={{ mr: 1 }} />
+            </div>
+            <div
+              variant="extended"
+              size="small"
+              title="Schedule"
+              color="primary"
+              onClick={handleSchedule}
+            >
+              <CalendarTodayIcon sx={{ mr: 1 }} />
+            </div>
+          </div>
+        )}
+        <MenuIcon />
       </div>
     </>
   );

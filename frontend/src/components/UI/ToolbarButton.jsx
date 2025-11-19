@@ -5,6 +5,8 @@ export default function ToolbarButton({
   children,
   id,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
   disabled,
   title,
 }) {
@@ -28,6 +30,8 @@ export default function ToolbarButton({
         color="primary"
         onClick={onClick}
         disabled={disabled}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         {children}
       </Fab>

@@ -6,15 +6,6 @@ const imageSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    altText: {
-      type: String,
-    },
-    sourceUrl: {
-      type: String,
-    },
-    artistName: {
-      type: String,
-    },
   },
   { timestamps: true }
 );
@@ -42,6 +33,17 @@ const taskSchema = mongoose.Schema(
     },
     completed: {
       type: Date,
+    },
+    archived: {
+      type: Boolean,
+      default: false,
+    },
+    dateArchived: {
+      type: Date,
+    },
+    priority: {
+      type: String,
+      default: "none",
     },
   },
   { timestamps: true }
@@ -142,6 +144,13 @@ const goalSchema = mongoose.Schema(
     days: {
       type: daysSchema,
     },
+    archived: {
+      type: Boolean,
+      default: false,
+    },
+    dateArchived: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
@@ -156,7 +165,11 @@ const projectSchema = mongoose.Schema(
     title: {
       type: String,
       required: true,
+      index: {
+        collation: { locale: "en", strength: 2 },
+      },
     },
+
     description: {
       type: String,
     },

@@ -16,7 +16,9 @@ export default function TimeSlotAccordion({
   handleActivityState,
   handleUpdateTimeSlotNote,
 }) {
-  const [timeSlotNote, setTimeSlotNote] = useState(timeSlot.note);
+  const [timeSlotNote, setTimeSlotNote] = useState(
+    timeSlot ? (timeSlot.note ? timeSlot.note : "") : ""
+  );
 
   function handleTimeSlotNoteUpdate(e) {
     handleUpdateTimeSlotNote(e.target.value, timeSlot.title, day.title);
@@ -24,50 +26,52 @@ export default function TimeSlotAccordion({
   }
   return (
     <>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-          <Typography component="span">{timeSlot.title}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {timeSlot &&
-            timeSlot.activities &&
-            timeSlot.activities.map((item, index) => (
-              <Activity
-                key={index}
-                data={item}
-                handleActivityState={handleActivityState}
-                day={day}
-                timeSlotTitle={timeSlot.title}
-              />
-            ))}
-
-          <div style={{ width: "100%" }}>
-            <Box
-              component="div"
-              sx={{ "& > :not(style)": { m: 1, width: "100%" } }}
-              noValidate
-              autoComplete="off"
-              fullwidth="true"
-            >
-              <div style={{ flex: "2" }}>
-                <InputLabel>Notes</InputLabel>
-                <TextareaAutosize
-                  variant="outlined"
-                  fullWidth
-                  type="text"
-                  margin="normal"
-                  value={timeSlotNote}
-                  onChange={handleTimeSlotNoteUpdate}
+      {day && (
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            <Typography component="span">{timeSlot.title}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {timeSlot &&
+              timeSlot.activities &&
+              timeSlot.activities.map((item, index) => (
+                <Activity
+                  key={index}
+                  data={item}
+                  handleActivityState={handleActivityState}
+                  day={day}
+                  timeSlotTitle={timeSlot.title}
                 />
-              </div>
-            </Box>
-          </div>
-        </AccordionDetails>
-      </Accordion>
+              ))}
+
+            <div style={{ width: "100%" }}>
+              <Box
+                component="div"
+                sx={{ "& > :not(style)": { m: 1, width: "100%" } }}
+                noValidate
+                autoComplete="off"
+                fullwidth="true"
+              >
+                <div style={{ flex: "2" }}>
+                  <InputLabel>Notes</InputLabel>
+                  <TextareaAutosize
+                    variant="outlined"
+                    fullWidth
+                    type="text"
+                    margin="normal"
+                    value={timeSlotNote}
+                    onChange={handleTimeSlotNoteUpdate}
+                  />
+                </div>
+              </Box>
+            </div>
+          </AccordionDetails>
+        </Accordion>
+      )}
     </>
   );
 }

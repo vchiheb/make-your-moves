@@ -17,11 +17,11 @@ import store from "./store";
 import AdminRoute from "./components/routes/AdminRoute";
 import UserRoute from "./components/routes/UserRoute";
 
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import Logout from "./screens/Logout";
+import HomeScreen from "./components/screens/HomeScreen";
+import LoginScreen from "./components/screens/LoginScreen";
+import Logout from "./components/screens/Logout";
 
-import ProjectsScreen from "./screens/ProjectsScreen";
+import ProjectsScreen from "./components/screens/ProjectsScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

@@ -1,51 +1,87 @@
-import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
+import { useContext } from "react";
+import { ProjectsContext } from "../../context/projects-context";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
-import ToolbarButton from "../UI/ToolbarButton";
+import ArchiveIcon from "@mui/icons-material/Unarchive";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useState } from "react";
 
 export default function ProjectToolbar({
-  projectId,
-  handleEditProject,
+  project,
   handleDeleteProject,
   handleSaveProject,
+  handleArchiveProject,
 }) {
+  const { handleViewProjectArchive, handleEditProject } =
+    useContext(ProjectsContext);
+
+  const [displayMenu, setDisplayMenu] = useState(false);
   return (
     <>
-      <div className="project-toolbar">
-        <Box
-          sx={{
-            "& > :not(style)": {
-              m: 1,
-              _display: "flex",
-              alignItems: "center",
-            },
-          }}
-        >
-          <ToolbarButton
-            id={projectId}
-            onClick={() => handleEditProject(projectId)}
-            title="Edit Project"
+      <div
+        style={{
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "row",
+          position: "relative",
+          right: "-15px",
+          backgroundColor: "white",
+        }}
+        title="Options"
+        onMouseEnter={() => setDisplayMenu(true)}
+        onMouseLeave={() => setDisplayMenu(false)}
+      >
+        {displayMenu && (
+          <div
+            style={{
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "row",
+              position: "absolute",
+              backgroundColor: "white",
+            }}
+            className="project-toolbar-items"
           >
-            <EditIcon _sx={{ mr: 1 }} />
-          </ToolbarButton>
-          <ToolbarButton
-            id={projectId}
-            onClick={() => handleSaveProject(projectId)}
-            title="Save Project"
-          >
-            <SaveIcon _sx={{ mr: 1 }} />
-          </ToolbarButton>
-          <ToolbarButton
-            id={projectId}
-            onClick={() => handleDeleteProject(projectId)}
-            title="Delete Project"
-          >
-            <DeleteIcon _sx={{ mr: 1 }} />
-          </ToolbarButton>
-        </Box>
+            <div
+              onClick={() => handleDeleteProject(project)}
+              title="Delete Project"
+            >
+              <DeleteIcon _sx={{ mr: 1 }} />
+            </div>
+            <div
+              onClick={() => handleArchiveProject(project)}
+              title="Archive Project"
+            >
+              <CheckBoxIcon _sx={{ mr: 1 }} />
+            </div>
+            <div
+              onClick={() => handleViewProjectArchive(project)}
+              title="View Archive"
+            >
+              <ArchiveIcon _sx={{ mr: 1 }} />
+            </div>
+            <div
+              onClick={() => handleEditProject(project)}
+              title="Edit Project"
+            >
+              <EditIcon _sx={{ mr: 1 }} />
+            </div>
+            <div
+              onClick={() => handleSaveProject(project)}
+              title="Save Project"
+            >
+              <SaveIcon _sx={{ mr: 1 }} />
+            </div>
+            <div onClick={() => setDisplayMenu(false)}>
+              <MoreVertIcon />
+            </div>
+          </div>
+        )}
+        {!displayMenu && <MoreVertIcon />}
       </div>
     </>
   );

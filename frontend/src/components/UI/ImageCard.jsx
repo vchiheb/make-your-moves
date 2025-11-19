@@ -10,11 +10,6 @@ export default function ImageCard({
   return (
     <div className="card">
       <div className="card-image">
-        <div className="credit">
-          <a href={sourceUrl} target="_blank" rel="noreferrer">
-            Artist: {artistName}
-          </a>
-        </div>
         <a href={href}>
           <img className="responsive-img" src={`${imageName}`} alt={altText} />
         </a>

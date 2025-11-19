@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import asyncHandler from "../middleware/asyncHandler.js";
 
 import Project from "../models/projectModel.js";
+import sortByTitle from "../utils/sort.js";
 
 // @desc  Fetch all projects
 // @route GET /api/projects
@@ -10,9 +11,76 @@ import Project from "../models/projectModel.js";
 const getProjects = asyncHandler(async (req, res) => {
   console.log("getting projects");
   const userId = req.user._id;
-  const items = await Project.find({ user: userId }).sort({ title: 1 }).exec();
-  //const items = await Project.find({}).sort({ title: 1 }).exec();
-  res.json(items);
+  //const items = await Project.find({ user: userId }).sort({ title: 1 }).exec();
+
+  /*const items = await Project.aggregate([
+    {
+      $match: {
+        // Your find-like query conditions here
+        user: { $eq: userId },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        description: 1,
+        coverImage: 1,
+        images: 1,
+        tasks: {
+          $sortArray: {
+            input: {
+              $filter: {
+                input: "$tasks",
+                as: "item",
+                cond: { $ne: ["$$item.archived", true] },
+              },
+            },
+            sortBy: { title: 1 },
+          },
+        },
+        goals: {
+          $sortArray: {
+            input: {
+              $filter: {
+                input: "$goals",
+                as: "item",
+                cond: { $ne: ["$$item.archived", true] },
+              },
+            },
+            sortBy: { title: 1 },
+          },
+        },
+        sortBy: { title: 1 },
+      },
+    },
+  ]).sort({ title: 1 });
+  */
+  const items = await Project.find({}).sort({ title: 1 }).exec();
+
+  // case insensivie SORT TASK AND GOAL LISTS
+  const sortedItems = [
+    items.map((proj) => {
+      return {
+        ...proj,
+        goals: proj.goals.sort((a, b) => sortByTitle),
+        tasks: proj.tasks.sort((a, b) => sortByTitle),
+      };
+    }),
+  ];
+
+  const sortedArray = [];
+  for (let i = 0; i < items.length; i++) {
+    let project = items[i];
+    project.tasks.sort((a, b) => sortByTitle(a, b));
+    project.goals.sort((a, b) => sortByTitle(a, b));
+    sortedArray.push(project);
+  }
+
+  // case insensitive sort projecs
+  sortedArray.sort((a, b) => sortByTitle(a, b));
+
+  res.json(sortedArray);
 });
 
 const updateProject = asyncHandler(async (req, res) => {
@@ -61,6 +129,9 @@ const updateProjectTaskList = await asyncHandler(async (req, res) => {
             duration: content[i].duration,
             notes: content[i].notes,
             actualDuration: content[i].actualDuration,
+            archived: content[i].archived,
+            dateArchived: content[i].dateArchived,
+            priority: content[i].priority,
           });
         }
       }
@@ -97,6 +168,8 @@ const updateProjectGoalList = await asyncHandler(async (req, res) => {
             timeSlots: content[i].timeSlots,
             timePeriod: content[i].timePeriod,
             days: content[i].days,
+            archived: content[i].archived,
+            dateArchived: content[i].dateArchived,
           });
         } else {
           console.log("PUSHING: ", content[i]);
@@ -143,10 +216,11 @@ const getProject = asyncHandler(async (req, res) => {
 
   const itemId = req.params.id;
   console.log("cid: " + itemId);
-  if (itemId !== "-1") {
+  if (itemId !== "0") {
     try {
       const item = await Project.findById(itemId);
       if (item) {
+        console.log("GETTING PROJECT: ", item);
         res.json(item);
         return;
       } else {

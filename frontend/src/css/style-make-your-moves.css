@@ -59,12 +59,6 @@ article {
   z-index: 2000;
 }
 
-.project-toolbar {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-}
-
 .project-content-toolbar {
   position: absolute;
   bottom: 100px;
@@ -93,6 +87,35 @@ input {
   padding-left: 10px !important;
 }
 
+.project-toolbar-items {
+  right: 0px;
+}
+
+.task.low,
+.task.medium,
+.task.high,
+.task.none,
+.task,
+.goal {
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.task.low {
+  background-color: lightgreen;
+  color: black;
+}
+
+.task.medium {
+  background-color: lightgoldenrodyellow;
+  color: black;
+}
+
+.task.high {
+  background-color: lightcoral;
+  color: black;
+}
+
 @media only screen and (max-width: 480px) {
   h1 {
     font-size: 1.25em;
@@ -106,5 +129,14 @@ input {
   main {
     padding: 0;
     margin: 0;
+  }
+
+  .project-toolbar {
+    right: 0px;
+    position: absolute;
+  }
+
+  .project-toolbar-items {
+    right: -27px;
   }
 }

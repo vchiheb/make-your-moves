@@ -58,13 +58,11 @@ export default function ScheduleAccordion({
               sx={{ "& > :not(style)": { m: 1, width: "100%" } }}
               noValidate
               autoComplete="off"
-              fullwidth="true"
             >
               <div style={{ flex: "2" }}>
                 <InputLabel>Notes</InputLabel>
                 <TextareaAutosize
                   variant="outlined"
-                  fullWidth
                   type="text"
                   margin="normal"
                   value={day.note}
@@ -75,7 +73,6 @@ export default function ScheduleAccordion({
                 <InputLabel>Date Completed</InputLabel>
                 <TextField
                   variant="outlined"
-                  fullwidth="true"
                   type="date"
                   sx={{ width: "100%" }}
                   value={day.date}
@@ -84,7 +81,7 @@ export default function ScheduleAccordion({
               </div>
               <div>
                 <SubmitButton onClick={() => handleLogActivity(day)}>
-                  Save Day's Activity
+                  Log Day's Activity
                 </SubmitButton>
               </div>
             </Box>

@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { current } from "@reduxjs/toolkit";
-import ProjectToolbar from "../components/toolbars/ProjectToolbar";
+
+import sortByTitle from "../utils/sort.js";
+import ProjectToolbar from "../components/toolbars/ProjectToolbar.jsx";
 
 const initialState = localStorage.getItem("projects")
   ? JSON.parse(localStorage.getItem("projects"))
@@ -38,11 +40,13 @@ const projectSlice = createSlice({
       const newProject = action.payload;
       console.log("new project: ", newProject);
       const newState = { ...state, projects: [...state.projects, newProject] };
+      newState.projects.sort((a, b) => sortByTitle(a, b));
       localStorage.setItem("projects", JSON.stringify(newState));
       return newState;
     },
     updateProject: (state, action) => {
       const projectDetails = action.payload;
+      console.log("updating project: ", projectDetails);
       const newState = {
         ...state,
         projects: state.projects.map((proj) => {
@@ -53,7 +57,8 @@ const projectSlice = createSlice({
           return proj;
         }),
       };
-
+      // resort the project array after update
+      newState.projects.sort((a, b) => sortByTitle(a, b));
       localStorage.setItem("projects", JSON.stringify(state));
       return newState;
     },
@@ -73,7 +78,12 @@ const projectSlice = createSlice({
           if (proj._id === projectId) {
             console.log("adding new goal");
             if (proj.goals) {
-              return { ...proj, goals: [...proj.goals, goalItem] };
+              return {
+                ...proj,
+                goals: [...proj.goals, goalItem].sort((a, b) =>
+                  sortByTitle(a, b)
+                ),
+              };
             } else {
               return { ...projectId, goals: [goalItem] };
             }
@@ -92,29 +102,23 @@ const projectSlice = createSlice({
       // SORT TASK LIST BY TITLE
 
       const g = [...goalList];
-      g.sort((a, b) => {
-        const titleA = a.title.toUpperCase(); // Convert to uppercase for case-insensitive comparison
-        const titleB = b.title.toUpperCase(); // Convert to uppercase for case-insensitive comparison
 
-        if (titleA < titleB) {
-          return -1; // titleA comes before titleB
-        }
-        if (titleA > titleB) {
-          return 1; // titleA comes after titleB
-        }
-        return 0; // titles are equal, maintain original relative order
-      });
+      const t = [...goalList];
+      t.sort((a, b) => sortByTitle(a, b));
       const newState = {
         ...state,
         projects: [
           ...state.projects.map((proj) => {
             if (proj._id === projectId) {
-              return { ...proj, goals: g };
+              return { ...proj, goals: t };
             }
             return proj;
           }),
         ],
       };
+
+      // SORT TASK LIST BY TITLE
+
       localStorage.setItem("projects", JSON.stringify(newState));
       return newState;
     },
@@ -129,12 +133,14 @@ const projectSlice = createSlice({
           if (proj._id === projectId) {
             return {
               ...proj,
-              goals: proj.goals.map((g) => {
-                if (g._id === goalId) {
-                  return goal;
-                }
-                return g;
-              }),
+              goals: proj.goals
+                .map((g) => {
+                  if (g._id === goalId) {
+                    return goal;
+                  }
+                  return g;
+                })
+                .sort((a, b) => sortByTitle(a, b)),
             };
           }
           return proj;
@@ -163,6 +169,122 @@ const projectSlice = createSlice({
       localStorage.setItem("projects", JSON.stringify(newState));
       return newState;
     },
+    unarchiveGoal: (state, action) => {
+      console.log("payload: ", action.payload);
+      const projectId = action.payload.projectId;
+      const goalId = action.payload._id;
+      const now = new Date();
+      const newState = {
+        projects: state.projects.map((proj) => {
+          if (proj._id === projectId) {
+            return {
+              ...proj,
+              goals: proj.goals.map((x) => {
+                if (x._id === goalId) {
+                  return {
+                    ...x,
+                    archived: false,
+                    dateArchived: null,
+                  };
+                }
+                return x;
+              }),
+            };
+          }
+          return proj;
+        }),
+      };
+
+      localStorage.setItem("projects", JSON.stringify(newState));
+      return newState;
+    },
+    archiveGoal: (state, action) => {
+      console.log("payload: ", action.payload);
+      const projectId = action.payload.projectId;
+      const goalId = action.payload._id;
+      const now = new Date();
+      const newState = {
+        projects: state.projects.map((proj) => {
+          if (proj._id === projectId) {
+            return {
+              ...proj,
+              goals: proj.goals.map((x) => {
+                if (x._id === goalId) {
+                  return {
+                    ...x,
+                    archived: true,
+                    dateArchived: now,
+                  };
+                }
+                return x;
+              }),
+            };
+          }
+          return proj;
+        }),
+      };
+
+      localStorage.setItem("projects", JSON.stringify(newState));
+      return newState;
+    },
+    unarchiveTask: (state, action) => {
+      console.log("payload: ", action.payload);
+      const projectId = action.payload.projectId;
+      const taskId = action.payload._id;
+      const now = new Date();
+      const newState = {
+        projects: state.projects.map((proj) => {
+          if (proj._id === projectId) {
+            return {
+              ...proj,
+              tasks: proj.tasks.map((x) => {
+                if (x._id === taskId) {
+                  return {
+                    ...x,
+                    archived: false,
+                    dateArchived: null,
+                  };
+                }
+                return x;
+              }),
+            };
+          }
+          return proj;
+        }),
+      };
+
+      localStorage.setItem("projects", JSON.stringify(newState));
+      return newState;
+    },
+    archiveTask: (state, action) => {
+      console.log("payload: ", action.payload);
+      const projectId = action.payload.projectId;
+      const taskId = action.payload._id;
+      const now = new Date();
+      const newState = {
+        projects: state.projects.map((proj) => {
+          if (proj._id === projectId) {
+            return {
+              ...proj,
+              tasks: proj.tasks.map((x) => {
+                if (x._id === taskId) {
+                  return {
+                    ...x,
+                    archived: true,
+                    dateArchived: now.toDateString(),
+                  };
+                }
+                return x;
+              }),
+            };
+          }
+          return proj;
+        }),
+      };
+
+      localStorage.setItem("projects", JSON.stringify(newState));
+      return newState;
+    },
     addTask: (state, action) => {
       console.log("add task, action payload", action.payload);
       const projectId = action.payload.projectId;
@@ -171,6 +293,31 @@ const projectSlice = createSlice({
         projects: state.projects.map((proj) => {
           if (proj._id === projectId) {
             return { ...proj, tasks: [...proj.tasks, taskItem] };
+          }
+          return proj;
+        }),
+      };
+      localStorage.setItem("projects", JSON.stringify(newState));
+      return newState;
+    },
+    updateTask: (state, action) => {
+      const projectId = action.payload.projectId;
+      const updatedTask = action.payload.task;
+      const newState = {
+        ...state,
+        projects: state.projects.map((proj) => {
+          if (proj._id === projectId) {
+            return {
+              ...proj,
+              tasks: [
+                ...proj.tasks.map((t) => {
+                  if (t._id === updatedTask._id) {
+                    return updatedTask;
+                  }
+                  return t;
+                }),
+              ],
+            };
           }
           return proj;
         }),
@@ -189,12 +336,14 @@ const projectSlice = createSlice({
           if (proj._id === projectId) {
             return {
               ...proj,
-              tasks: proj.tasks.map((t) => {
-                if (t._id === taskId) {
-                  return task;
-                }
-                return t;
-              }),
+              tasks: proj.tasks
+                .map((t) => {
+                  if (t._id === taskId) {
+                    return task;
+                  }
+                  return t;
+                })
+                .sort((a, b) => sortByTitle(a, b)),
             };
           }
           return proj;
@@ -211,18 +360,7 @@ const projectSlice = createSlice({
       // SORT TASK LIST BY TITLE
 
       const t = [...taskList];
-      t.sort((a, b) => {
-        const titleA = a.title.toUpperCase(); // Convert to uppercase for case-insensitive comparison
-        const titleB = b.title.toUpperCase(); // Convert to uppercase for case-insensitive comparison
-
-        if (titleA < titleB) {
-          return -1; // titleA comes before titleB
-        }
-        if (titleA > titleB) {
-          return 1; // titleA comes after titleB
-        }
-        return 0; // titles are equal, maintain original relative order
-      });
+      t.sort((a, b) => sortByTitle(a, b));
 
       const newState = {
         ...state,
@@ -404,7 +542,11 @@ export const {
   addTask,
   saveTaskConfig,
   deleteTask,
+  archiveTask,
+  unarchiveTask,
   addGoal,
+  archiveGoal,
+  unarchiveGoal,
   deleteGoal,
   updateProject,
   setStateCurrentProjectId,
@@ -413,5 +555,6 @@ export const {
   saveGoalConfig,
   updateGoalsWithIds,
   updateTasksWithIds,
+  updateTask,
 } = projectSlice.actions;
 export default projectSlice.reducer;

@@ -15,10 +15,24 @@ class TimeSlot {
   timeLeftOver = 0;
   activities = [];
   note = "";
+  title = "";
 
   constructor(timeSlotTitle, timeAvailable) {
     this.title = timeSlotTitle;
     this.timeAvailable = timeAvailable;
+  }
+
+  initialise(timeSlot) {
+    this.activities = [];
+    for (let activity of timeSlot.activities) {
+      let item = new Activity(
+        activity._id,
+        activity.title,
+        activity.goalID,
+        activity.duration
+      );
+      this.activities.push(item);
+    }
   }
   addActivity(activity, timeSlotTitle) {
     const newActivity = new Activity(
@@ -71,6 +85,17 @@ class Day {
     this.afternoon = new TimeSlot("Afternoon", 240);
     this.evening = new TimeSlot("Evening", 240);
     this.bedtime = new TimeSlot("Bedtime", 30);
+  }
+
+  initialise(day) {
+    if (day) {
+      this.onWaking.initialise(day.onWaking);
+      this.morning.initialise(day.morning);
+      this.midday.initialise(day.midday);
+      this.afternoon.initialise(day.afternoon);
+      this.evening.initialise(day.evening);
+      this.bedtime.initialise(day.bedtime);
+    }
   }
 
   assignWeeklyActivityToTimeSlot(activity, timeSlot) {
@@ -233,7 +258,7 @@ class Day {
 }
 
 class Schedule {
-  constructor() {
+  constructor(data) {
     this.monday = new Day("Monday");
     this.tuesday = new Day("Tuesday");
     this.wednesday = new Day("Wednesday");
@@ -241,6 +266,23 @@ class Schedule {
     this.friday = new Day("Friday");
     this.saturday = new Day("Saturday");
     this.sunday = new Day("Sunday");
+
+    if (data) {
+      console.log("initialising");
+      this.initialise(data);
+    }
+  }
+
+  initialise(data) {
+    if (data) {
+      this.monday.initialise(data.monday);
+      this.tuesday.initialise(data.tuesday);
+      this.wednesday.initialise(data.wednesday);
+      this.thursday.initialise(data.thursday);
+      this.friday.initialise(data.friday);
+      this.saturday.initialise(data.saturday);
+      this.sunday.initialise(data.sunday);
+    }
   }
 
   completeActivity(activity, day, timeSlot, timestamp, isDone) {
@@ -330,38 +372,43 @@ class Schedule {
           if (Number(goal.timePeriod) && Number(goal.timePeriod) === 3) {
             if (goal.days) {
               // handle weekly tasks with predefined slots
-              console.log("goal: ", goal);
-              if (goal.days.monday.timeSlots) {
+              if (goal.days.monday && goal.days.monday.timeSlots) {
                 this.monday.assignWeeklyActivity(
                   goal,
                   goal.days.monday.timeSlots
                 );
               }
-              if (goal.days.tuesday.timeSlots) {
+              if (goal.days.tuesday && goal.days.tuesday.timeSlots) {
                 this.tuesday.assignWeeklyActivity(
                   goal,
                   goal.days.tuesday.timeSlots
                 );
               }
-              if (goal.days.wednesday.timeSlots) {
+              if (goal.days.wednesday && goal.days.wednesday.timeSlots) {
                 this.wednesday.assignWeeklyActivity(
                   goal,
                   goal.days.wednesday.timeSlots
                 );
               }
-              if (goal.days.friday.timeSlots) {
+              if (goal.days.thursday && goal.days.thursday.timeSlots) {
+                this.thursday.assignWeeklyActivity(
+                  goal,
+                  goal.days.thursday.timeSlots
+                );
+              }
+              if (goal.days.friday && goal.days.friday.timeSlots) {
                 this.friday.assignWeeklyActivity(
                   goal,
                   goal.days.friday.timeSlots
                 );
               }
-              if (goal.days.saturday.timeSlots) {
+              if (goal.days.saturday && goal.days.saturday.timeSlots) {
                 this.saturday.assignWeeklyActivity(
                   goal,
                   goal.days.saturday.timeSlots
                 );
               }
-              if (goal.days.sunday.timeSlots) {
+              if (goal.days.sunday && goal.days.sunday.timeSlots) {
                 this.sunday.assignWeeklyActivity(
                   goal,
                   goal.days.sunday.timeSlots

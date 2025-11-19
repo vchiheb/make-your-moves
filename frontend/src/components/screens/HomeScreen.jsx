@@ -1,9 +1,9 @@
 import { ThemeProvider } from "@mui/material/styles";
-import customTheme from "../theme"; // Import your custom theme
-import Loader from "../components/UI/Loader.jsx";
-import Message from "../components/UI/Message.jsx";
+import customTheme from "../../theme"; // Import your custom theme
+import Loader from "../UI/Loader.jsx";
+import Message from "../UI/Message.jsx";
 //import { visions } from "../data/visions.js";
-import { projects } from "../data/projects.js";
+import { projects } from "../../data/projects.js";
 
 export default function HomeScreen() {
   const error = null;

@@ -1,8 +1,12 @@
+import { useContext } from "react";
+import { ProjectsContext } from "../../context/projects-context";
+
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function ProjectsDrawerToolbar({ handleCloseDrawer }) {
+export default function ProjectArchiveDrawerToolbar({}) {
+  const { handleCloseProjectArchiveDrawer } = useContext(ProjectsContext);
   return (
     <div className="projects-drawer-toolbar">
       <Box
@@ -19,7 +23,7 @@ export default function ProjectsDrawerToolbar({ handleCloseDrawer }) {
           variant="extended"
           size="small"
           color="primary"
-          onClick={handleCloseDrawer}
+          onClick={handleCloseProjectArchiveDrawer}
         >
           <CloseIcon sx={{ mr: 1 }} />
           Close

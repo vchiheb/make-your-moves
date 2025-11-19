@@ -1,33 +1,24 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useUpdateProjectGoalListMutation } from "../../slices/projectApiSlice";
-import Drawer from "@mui/material/Drawer";
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { useContext, useState } from "react";
 
+import { ProjectsContext } from "../../context/projects-context";
+import { InputLabel, Select, MenuItem } from "@mui/material";
+import { saveGoalConfig } from "../../slices/projectSlice";
+
+import Drawer from "@mui/material/Drawer";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import ProjectsDrawerToolbar from "../toolbars/ProjectsDrawerToolbar";
+import ProjectsDrawerToolbar from "../toolbars/ProjectDrawerToolbar";
 import SubmitButton from "../UI/SubmitButton";
-import { useEffect, useState } from "react";
-import { saveGoalConfig } from "../../slices/projectSlice";
-import { current } from "@reduxjs/toolkit";
 
-import { useGetProjectQuery } from "../../slices/projectApiSlice";
+export default function GoalDrawer({ open, projectId, currentGoal }) {
+  const { handleCloseGoalDrawer, handleSaveGoalList, handleSaveGoalConfig } =
+    useContext(ProjectsContext);
 
-export default function GoalDrawer({
-  open,
-  handleCloseDrawer,
-  projectId,
-  goalId,
-  currentGoal,
-  saveGoalList,
-}) {
   const dispatch = useDispatch();
-
-  const [saveProjectGoalList, { isLoading2, error2 }] =
-    useUpdateProjectGoalListMutation();
 
   const [title, setTitle] = useState(currentGoal.title);
 
@@ -211,9 +202,9 @@ export default function GoalDrawer({
       : false
   );
 
-  function handleSaveGoalConfig() {
+  function onSaveGoalConfig() {
     const updatedGoal = {
-      _id: goalId,
+      _id: currentGoal._id,
       title,
       duration,
       frequency,
@@ -238,18 +229,18 @@ export default function GoalDrawer({
     };
 
     const payload = { projectId, updatedGoal };
-    console.log("saving goal config: ", updatedGoal);
 
     dispatch(saveGoalConfig(payload));
-    saveGoalList(projectId, updatedGoal);
-    handleCloseDrawer();
+    handleSaveGoalList(projectId, updatedGoal);
+    handleSaveGoalConfig();
+    handleCloseGoalDrawer();
   }
   return (
     <>
       {currentGoal && (
         <div>
           <Drawer anchor="top" open={open} transitionDuration={800}>
-            <ProjectsDrawerToolbar handleCloseDrawer={handleCloseDrawer} />
+            <ProjectsDrawerToolbar handleCloseDrawer={handleCloseGoalDrawer} />
             <div className="projects-drawer">
               <div className="container">
                 Configure Goal
@@ -955,7 +946,7 @@ export default function GoalDrawer({
                           </div>
                         </>
                       )}
-                      <SubmitButton onClick={handleSaveGoalConfig}>
+                      <SubmitButton onClick={onSaveGoalConfig}>
                         Save
                       </SubmitButton>
                     </div>

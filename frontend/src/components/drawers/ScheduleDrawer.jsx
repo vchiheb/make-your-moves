@@ -1,26 +1,30 @@
+import { useContext } from "react";
+import { ProjectsContext } from "../../context/projects-context";
+
 import Drawer from "@mui/material/Drawer";
 
 import ScheduleDrawerToolbar from "../toolbars/ScheduleDrawerToolbar";
 import ScheduleAccordions from "../schedule/ScheduleAccordions";
-import { useState } from "react";
 
-export default function ScheduleDrawer({
-  open,
-  handleCloseDrawer,
-  schedule,
-  handleActivityState,
-  handleUpdateDayNote,
-  handleUpdateDayDate,
-  handleUpdateTimeSlotNote,
-  handleLogActivity,
-}) {
+export default function ScheduleDrawer({ open, schedule }) {
+  const {
+    handleCloseScheduleDrawer,
+    handleActivityState,
+    handleUpdateDayNote,
+    handleUpdateDayDate,
+    handleUpdateTimeSlotNote,
+    handleLogActivity,
+  } = useContext(ProjectsContext);
+  console.log("SCHEDULE: ", schedule);
   return (
     <>
       {schedule && (
         <div>
           <Drawer anchor="top" open={open} transitionDuration={800}>
             <div className="container">
-              <ScheduleDrawerToolbar handleCloseDrawer={handleCloseDrawer} />
+              <ScheduleDrawerToolbar
+                handleCloseDrawer={handleCloseScheduleDrawer}
+              />
               <div className="projects-drawer schedule-drawer">
                 <ScheduleAccordions
                   monday={schedule.monday}

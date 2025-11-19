@@ -1,49 +1,53 @@
-import { useDispatch } from "react-redux";
+import { useContext } from "react";
+import { ProjectsContext } from "../context/projects-context";
 
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SettingsIcon from "@mui/icons-material/Settings";
-import ArchiveIcon from "@mui/icons-material/Archive";
 
 import ProjectToolbar from "./toolbars/ProjectToolbar";
-import ToolbarButton from "./UI/ToolbarButton";
+import Task from "./Task";
+import Goal from "./Goal";
+
 import ImageCard from "./UI/ImageCard";
-import { useState } from "react";
 
-export default function Project({
-  data,
-  handleEditProject,
-  handleDeleteProject,
-  handleAddTask,
-  handleDeleteTask,
-  handleSaveProject,
-  handleAddGoal,
-  handleDeleteGoal,
-  handleOpenGoalDrawer,
-  handleOpenTaskDrawer,
-  handleSetCurrentProject,
-}) {
-  const dispatch = useDispatch();
-
+export default function Project({ data }) {
+  const {
+    handleDeleteProject,
+    handleToggleTaskPriority,
+    handleAddTask,
+    handleArchiveTask,
+    handleDeleteTask,
+    handleSaveProject,
+    handleArchiveProject,
+    handleAddGoal,
+    handleArchiveGoal,
+    handleDeleteGoal,
+    handleOpenGoalDrawer,
+    handleOpenTaskDrawer,
+    handleSetCurrentProject,
+  } = useContext(ProjectsContext);
   return (
     <>
       {data && data.coverImage && (
         <ImageCard
           imageName={data.coverImage.fileName}
-          altText={data.coverImage.altText}
           href={`/projects/${data._id}`}
           title={data.title}
-          artistName={data.coverImage.artistName}
-          sourceUrl={data.coverImage.sourceUrl}
         >
-          <ProjectToolbar
-            handleEditProject={handleEditProject}
-            handleDeleteProject={handleDeleteProject}
-            projectId={data._id}
-            handleSaveProject={handleSaveProject}
-          />
-          <div>{data.description}</div>
+          <div className="row" style={{ position: "relative" }}>
+            <div className="col s10 m11">{data.description}</div>
+            <div
+              className="col s1 m1 project-toolbar"
+              style={{ position: "relative" }}
+            >
+              <ProjectToolbar
+                handleDeleteProject={handleDeleteProject}
+                handleArchiveProject={handleArchiveProject}
+                project={data}
+                handleSaveProject={handleSaveProject}
+              />
+            </div>
+          </div>
           <div>
             <Box
               component="div"
@@ -62,31 +66,17 @@ export default function Project({
             </Box>
           </div>
           {data.tasks &&
-            data.tasks.map((item, index) => {
-              return (
-                <div className="row" key={index}>
-                  <div className="col s10">{item.title}</div>
-                  <div className="col s1">
-                    <ToolbarButton
-                      title="Configure"
-                      onClick={() =>
-                        handleOpenTaskDrawer(item._id, data._id, item)
-                      }
-                    >
-                      <SettingsIcon />
-                    </ToolbarButton>
-                  </div>
-                  <div className="col s1">
-                    <ToolbarButton
-                      title="Delete Task"
-                      onClick={() => handleDeleteTask(item._id, data._id)}
-                    >
-                      <DeleteIcon />
-                    </ToolbarButton>
-                  </div>
-                </div>
-              );
-            })}
+            data.tasks.map((item, index) => (
+              <Task
+                handleDeleteTask={handleDeleteTask}
+                handleArchiveTask={handleArchiveTask}
+                handleOpenTaskDrawer={handleOpenTaskDrawer}
+                handleToggleTaskPriority={handleToggleTaskPriority}
+                data={item}
+                key={index}
+                projectId={data._id}
+              />
+            ))}
 
           <div>
             <Box
@@ -110,28 +100,14 @@ export default function Project({
           {data.goals &&
             data.goals.map((item, index) => {
               return (
-                <div className="row" key={index}>
-                  <div className="col s10">{item.title}</div>
-
-                  <div className="col s1">
-                    <ToolbarButton
-                      title="Configure"
-                      onClick={() =>
-                        handleOpenGoalDrawer(item._id, data._id, item)
-                      }
-                    >
-                      <SettingsIcon />
-                    </ToolbarButton>
-                  </div>
-                  <div className="col s1">
-                    <ToolbarButton
-                      title="Delete Goal"
-                      onClick={() => handleDeleteGoal(item._id, data._id)}
-                    >
-                      <DeleteIcon />
-                    </ToolbarButton>
-                  </div>
-                </div>
+                <Goal
+                  handleDeleteGoal={handleDeleteGoal}
+                  handleArchiveGoal={handleArchiveGoal}
+                  handleOpenGoalDrawer={handleOpenGoalDrawer}
+                  data={item}
+                  key={index}
+                  projectId={data._id}
+                />
               );
             })}
         </ImageCard>

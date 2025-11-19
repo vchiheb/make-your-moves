@@ -1,3 +1,6 @@
+import { useContext } from "react";
+import { ProjectsContext } from "../../context/projects-context";
+
 import Drawer from "@mui/material/Drawer";
 
 import TextField from "@mui/material/TextField";
@@ -5,26 +8,37 @@ import Box from "@mui/material/Box";
 
 import SubmitButton from "../UI/SubmitButton";
 
-import ProjectsDrawerToolbar from "../toolbars/ProjectsDrawerToolbar";
+import ProjectDrawerToolbar from "../toolbars/ProjectDrawerToolbar";
 import TaskAccordion from "../tasks/TaskAccordion";
 import { useState } from "react";
+import { InputLabel } from "@mui/material";
 
 export default function TasksDrawer({
   open,
-  handleCloseDrawer,
   data,
-  handleSelectTaskForTimetracking,
-  startTimeTrackingTimer,
-  stopTimeTrackingTimer,
-  handleLogTime,
   timerIsRunning,
   task,
   startTime,
   timeSpent,
 }) {
+  const {
+    handleCloseTasksDrawer,
+    handleSelectTaskForTimetracking,
+    startTimeTrackingTimer,
+    stopTimeTrackingTimer,
+    handleLogTime,
+  } = useContext(ProjectsContext);
+
   const [timeSpentDescription, setTimeSpentDescription] = useState("");
   const [timeSpentInMinutes, setTimeSpentInMinutes] = useState("");
-  const [allowOverrideTimer, setAllowOverrideTimer] = useState(true);
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Add 1 as month is 0-indexed
+  const day = today.getDate().toString().padStart(2, "0");
+
+  const todayFormatted = `${year}-${month}-${day}`;
+  const [timeSpentDate, setTimeSpentDate] = useState(todayFormatted);
 
   const formatterAU = new Intl.DateTimeFormat("en-AU", {
     weekday: "short",
@@ -40,7 +54,9 @@ export default function TasksDrawer({
         <Drawer anchor="top" open={open} transitionDuration={800}>
           <div className="projects-drawer">
             <div className="container">
-              <ProjectsDrawerToolbar handleCloseDrawer={handleCloseDrawer} />
+              <ProjectDrawerToolbar
+                handleCloseDrawer={handleCloseTasksDrawer}
+              />
               {!task._id && (
                 <p>Select a task to start tracking time against it.</p>
               )}
@@ -77,6 +93,20 @@ export default function TasksDrawer({
                           value={timeSpentInMinutes}
                           onChange={(e) => {
                             setTimeSpentInMinutes(e.target.value);
+                          }}
+                          sx={{ width: "100%" }}
+                        />
+                      </div>
+                      <div style={{ flex: "2" }}>
+                        <InputLabel>Date</InputLabel>
+                        <TextField
+                          variant="outlined"
+                          type="date"
+                          fullwidth="true"
+                          disabled={timerIsRunning}
+                          value={timeSpentDate}
+                          onChange={(e) => {
+                            setTimeSpentDate(e.target.value);
                           }}
                           sx={{ width: "100%" }}
                         />
@@ -120,7 +150,8 @@ export default function TasksDrawer({
                           onClick={() => {
                             handleLogTime(
                               timeSpentInMinutes,
-                              timeSpentDescription
+                              timeSpentDescription,
+                              timeSpentDate
                             );
                             setTimeSpentInMinutes("");
                             setTimeSpentDescription("");

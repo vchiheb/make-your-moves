@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useEffect } from "react";
+import { useContext } from "react";
+import { ProjectsContext } from "../../context/projects-context";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -10,48 +11,47 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 
 import SubmitButton from "../UI/SubmitButton";
-import { useUploadProductImageMutation } from "../../slices/projectApiSlice";
+import {
+  useUploadProductImageMutation,
+  useAddProjectMutation,
+} from "../../slices/projectApiSlice";
 import { useDispatch } from "react-redux";
+import { addProject } from "../../slices/projectSlice";
 
 export default function ProjectEditForm({
   projectId,
   data,
   saveProjectDetails,
 }) {
-  console.log("id: ", projectId);
+  const { handleAddNewProject, handleCloseProjectDrawer } =
+    useContext(ProjectsContext);
+
   const project = data;
 
-  console.log("project: ", project);
-  let projectTitle = null;
-  let projectDescription = null;
-  let projectCoverImageArtistName = null;
-  let projectCoverImageAttributionLink = null;
+  let projectTitle = "";
+  let projectDescription = "";
   let projectCoverImageFileName = null;
   if (project) {
     projectTitle = project.title;
     projectDescription = project.description;
     projectCoverImageFileName = project.coverImage.fileName;
-    projectCoverImageArtistName = project.coverImage.artistName;
-    projectCoverImageAttributionLink = project.coverImage.sourceUrl;
   }
-  const [title, setTitle] = useState(data.title);
+  const [title, setTitle] = useState(data ? data.title : "");
   const [titleError, setTitleError] = useState(false);
   const [description, setDescription] = useState(projectDescription);
   const [descriptionError, setDescriptionError] = useState(false);
+  const [coverImageFileNameError, setCoverImageFileNameError] = useState(false);
   const [coverImageFileName, setCoverImageFileName] = useState(
     projectCoverImageFileName
   );
-  const [coverImageArtistName, setCoverImageArtistName] = useState(
-    projectCoverImageArtistName
-  );
-  const [coverImageAttributionLink, setCoverImageAttributionLink] = useState(
-    projectCoverImageAttributionLink
-  );
+
   const dispatch = useDispatch();
   const [uploadProductImage, { isLoading: loadingUpload }] =
     useUploadProductImageMutation();
+  const [addProjectToDatabase, { isLoading: loadingAddProject, refetch }] =
+    useAddProjectMutation();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
 
     let valid = true;
@@ -72,21 +72,44 @@ export default function ProjectEditForm({
       setDescriptionError(false);
     }
 
-    if (valid) {
-      console.log({ title });
+    // validate cover image
+    if (!coverImageFileName) {
+      valid = false;
+      setCoverImageFileNameError(true);
+    }
+
+    if (projectId === -1) {
+      if (!valid) {
+        return;
+      }
       const projectItem = {
-        _id: projectId,
         title: title,
         description: description,
         coverImage: {
           fileName: coverImageFileName,
-          altText: title,
-          sourceUrl: coverImageAttributionLink,
-          artistName: coverImageArtistName,
         },
       };
+      const result = await addProjectToDatabase(projectItem);
+      console.log("RESULT: ", result);
+      //refetch();
+      console.log("saved item", projectItem);
+      dispatch(addProject(result.data));
+      handleAddNewProject();
+      handleCloseProjectDrawer();
+    } else {
+      if (valid) {
+        console.log("TITLE: ", title);
+        const projectItem = {
+          _id: projectId,
+          title: title,
+          description: description,
+          coverImage: {
+            fileName: coverImageFileName,
+          },
+        };
 
-      saveProjectDetails(projectItem);
+        saveProjectDetails(projectItem);
+      }
     }
   };
   // Create a visually hidden input for accessibility
@@ -120,7 +143,7 @@ export default function ProjectEditForm({
 
   return (
     <>
-      {project && (
+      {
         <div style={{ width: "100%" }}>
           <Box
             component="form"
@@ -130,7 +153,9 @@ export default function ProjectEditForm({
             onSubmit={handleSubmit}
             fullWidth="true"
           >
-            <Typography variant="h5">Edit Project</Typography>
+            <Typography variant="h5">
+              {projectId === -1 ? "Add" : "Edit"} Project
+            </Typography>
             <TextField
               label="Project Title"
               variant="outlined"
@@ -151,7 +176,6 @@ export default function ProjectEditForm({
               }
               fullWidth="true"
             />
-
             <Button
               component="label" // Turns the Button into a label element
               role={undefined} // Optional: Explicitly define role for accessibility
@@ -159,38 +183,17 @@ export default function ProjectEditForm({
               tabIndex={-1} // Prevents the label from being tab-focusable directly
               startIcon={<CloudUploadIcon />}
             >
-              {coverImageFileName}
+              {coverImageFileName ? coverImageFileName : "Upload Cover Image"}
               <VisuallyHiddenInput type="file" onChange={handleFileChange} />
             </Button>
-
-            <TextField
-              label="Cover Image Artist"
-              variant="outlined"
-              value={coverImageArtistName}
-              onChange={(e) => setCoverImageArtistName(e.target.value)}
-              error={descriptionError}
-              helperText={
-                descriptionError ? "Project description is required" : ""
-              }
-              fullWidth="true"
-            />
-
-            <TextField
-              label="Cover Image Attribution Link"
-              variant="outlined"
-              value={coverImageAttributionLink}
-              onChange={(e) => setCoverImageAttributionLink(e.target.value)}
-              error={descriptionError}
-              helperText={
-                descriptionError ? "Project description is required" : ""
-              }
-              fullWidth="true"
-            />
+            <span style={{ color: "red" }}>
+              {coverImageFileNameError ? "Cover image is required" : ""}
+            </span>
 
             <SubmitButton>Save</SubmitButton>
           </Box>
         </div>
-      )}
+      }
     </>
   );
 }

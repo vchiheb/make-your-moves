@@ -10,3 +10,4 @@ export const UPLOADS_URL = "/api/upload";
 export const USERS_URL = "/api/users";
 export const ACTIVITYLOG_URL = "/api/activity";
 export const TIMELOG_URL = "/api/time";
+export const SCHEDULE_URL = "/api/schedule";

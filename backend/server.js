@@ -7,6 +7,7 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
 import timeRoutes from "./routes/timeLogRoutes.js";
+import scheduleRoutes from "./routes/scheduleRoutes.js";
 
 import uploadRoutes from "./routes/uploadRoutes.js";
 
@@ -55,6 +56,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/time", timeRoutes);
 app.use("/api/activity", activityRoutes);
+app.use("/api/schedule", scheduleRoutes);
 app.use("/api/upload", uploadRoutes);
 
 if (process.env.NODE_ENV === "production") {

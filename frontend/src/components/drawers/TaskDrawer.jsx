@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useState } from "react";
+import { useContext } from "react";
 
-import { useUpdateProjectTaskListMutation } from "../../slices/projectApiSlice";
+import { ProjectsContext } from "../../context/projects-context";
 import { saveTaskConfig } from "../../slices/projectSlice";
-import { current } from "@reduxjs/toolkit";
 
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
@@ -11,22 +11,14 @@ import Box from "@mui/material/Box";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import InputLabel from "@mui/material/InputLabel";
 
-import ProjectsDrawerToolbar from "../toolbars/ProjectsDrawerToolbar";
+import ProjectDrawerToolbar from "../toolbars/ProjectDrawerToolbar";
 import SubmitButton from "../UI/SubmitButton";
 
-export default function TaskDrawer({
-  open,
-  handleCloseDrawer,
-  projectId,
-  taskId,
-  currentTask,
-  project,
-  saveTaskList,
-}) {
-  const dispatch = useDispatch();
+export default function TaskDrawer({ open, projectId, currentTask }) {
+  const { handleCloseTaskDrawer, handleSaveTaskList } =
+    useContext(ProjectsContext);
 
-  const [updateProjectTaskList, { isLoading2, error2 }] =
-    useUpdateProjectTaskListMutation();
+  const dispatch = useDispatch();
 
   const [title, setTitle] = useState(currentTask.title);
   const [duration, setDuration] = useState(currentTask.duration);
@@ -37,26 +29,26 @@ export default function TaskDrawer({
 
   function handleSaveTaskConfig() {
     const updatedTask = {
-      _id: taskId,
+      _id: currentTask._id,
       title,
       duration,
       notes,
       actualDuration,
+      priority: currentTask.priority,
     };
 
     const payload = { projectId, updatedTask };
-    console.log("saving goal config: ", updatedTask);
 
     dispatch(saveTaskConfig(payload));
-    saveTaskList(projectId, updatedTask);
-    handleCloseDrawer();
+    handleSaveTaskList(projectId, updatedTask);
+    handleCloseTaskDrawer();
   }
   return (
     <>
       {currentTask && (
         <div>
           <Drawer anchor="top" open={open} transitionDuration={800}>
-            <ProjectsDrawerToolbar handleCloseDrawer={handleCloseDrawer} />
+            <ProjectDrawerToolbar handleCloseDrawer={handleCloseTaskDrawer} />
             <div className="projects-drawer">
               <div className="container">
                 Configure Task

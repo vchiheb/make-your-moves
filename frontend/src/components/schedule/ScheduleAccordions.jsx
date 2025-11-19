@@ -16,14 +16,16 @@ export default function ScheduleAccordions({
 }) {
   return (
     <>
-      <ScheduleAccordion
-        day={monday}
-        handleActivityState={handleActivityState}
-        handleUpdateDayNote={handleUpdateDayNote}
-        handleUpdateDayDate={handleUpdateDayDate}
-        handleUpdateTimeSlotNote={handleUpdateTimeSlotNote}
-        handleLogActivity={handleLogActivity}
-      />
+      {monday && (
+        <ScheduleAccordion
+          day={monday}
+          handleActivityState={handleActivityState}
+          handleUpdateDayNote={handleUpdateDayNote}
+          handleUpdateDayDate={handleUpdateDayDate}
+          handleUpdateTimeSlotNote={handleUpdateTimeSlotNote}
+          handleLogActivity={handleLogActivity}
+        />
+      )}
       <ScheduleAccordion
         day={tuesday}
         handleActivityState={handleActivityState}
