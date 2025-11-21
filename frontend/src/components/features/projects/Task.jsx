@@ -1,24 +1,23 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
-import ToolbarButton from "./UI/ToolbarButton";
+import { ProjectsContext } from "../../../context/projects-context";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-export default function Task({
-  handleOpenTaskDrawer,
-  handleDeleteTask,
-  handleArchiveTask,
-  handleToggleTaskPriority,
-  data,
-  projectId,
-}) {
+export default function Task({ data, projectId }) {
+  const {
+    handleOpenTaskDrawer,
+    handleDeleteTask,
+    handleArchiveTask,
+    handleToggleTaskPriority,
+  } = useContext(ProjectsContext);
   const [displayMenu, setDisplayMenu] = useState(false);
   return (
     <>
-      {!data.archived && (
+      {data && Object.keys(data).length > 0 && !data.archived && (
         <div className="row">
           <div className="col s10 m11" title={data.title}>
             <div

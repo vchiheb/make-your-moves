@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ProjectsContext } from "../../context/projects-context";
+import { ProjectsContext } from "../../../context/projects-context";
 
 import Drawer from "@mui/material/Drawer";
 import ProjectDrawerToolbar from "../toolbars/ProjectDrawerToolbar";
@@ -17,13 +17,11 @@ export default function ProjectDraw({ open, projectId, data }) {
               <ProjectDrawerToolbar
                 handleCloseDrawer={handleCloseProjectDrawer}
               />
-              {
-                <ProjectEditForm
-                  projectId={projectId}
-                  data={data}
-                  saveProjectDetails={handleSaveProjectDetails}
-                />
-              }
+              <ProjectEditForm
+                projectId={projectId}
+                data={data}
+                saveProjectDetails={handleSaveProjectDetails}
+              />
             </div>
           </div>
         </Drawer>

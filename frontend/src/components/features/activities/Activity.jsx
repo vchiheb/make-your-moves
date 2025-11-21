@@ -23,7 +23,9 @@ export default function Activity({
         <div className="col s8" onClick={handleCheckDone}>
           {data.title}
         </div>
-        <div className="col s3">{data.duration} minutes</div>
+        <div className="col s3">
+          {data.duration} minute{data.duration > 1 ? "s" : ""}
+        </div>
         <div className="col s1">
           {isDone && <CheckBoxIcon onClick={handleCheckDone} />}
           {!isDone && <CheckBoxOutlineBlankIcon onClick={handleCheckDone} />}

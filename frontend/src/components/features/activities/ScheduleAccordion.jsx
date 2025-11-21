@@ -4,7 +4,7 @@ import TextareaAutosize from "@mui/material/TextareaAutosize";
 
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
-import SubmitButton from "../UI/SubmitButton";
+import SubmitButton from "../../UI/elements/SubmitButton";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -24,8 +24,9 @@ export default function ScheduleAccordion({
   handleUpdateTimeSlotNote,
   handleLogActivity,
 }) {
-  const [dayNote, setDayNote] = useState(day.note);
-  const [dayDate, setDayDate] = useState(day.date);
+  const [dayNote, setDayNote] = useState(day ? (day.note ? day.note : "") : "");
+  const [dayDate, setDayDate] = useState(day ? (day.date ? day.date : "") : "");
+  const [dayDateError, setDayDateError] = useState(false);
 
   function handleDayNoteUpdate(e) {
     handleUpdateDayNote(e.target.value, day.title);
@@ -36,6 +37,19 @@ export default function ScheduleAccordion({
     handleUpdateDayDate(e.target.value, day.title);
     setDayDate(e.target.value);
   }
+
+  function onSubmitLog(day) {
+    let valid = true;
+
+    if (dayDate.trim() === "") {
+      setDayDateError(true);
+      valid = false;
+    } else {
+      setDayDateError(false);
+    }
+
+    if (valid) handleLogActivity(day);
+  }
   return (
     <>
       <Accordion>
@@ -44,7 +58,7 @@ export default function ScheduleAccordion({
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          <Typography component="span">{day.title}</Typography>
+          <Typography component="span">{day ? day.title : ""}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <TimeSlotAccordions
@@ -65,7 +79,7 @@ export default function ScheduleAccordion({
                   variant="outlined"
                   type="text"
                   margin="normal"
-                  value={day.note}
+                  value={dayNote}
                   onChange={handleDayNoteUpdate}
                 />
               </div>
@@ -75,12 +89,14 @@ export default function ScheduleAccordion({
                   variant="outlined"
                   type="date"
                   sx={{ width: "100%" }}
-                  value={day.date}
+                  value={dayDate}
                   onChange={handleDateUpdate}
+                  error={dayDateError}
+                  helperText={dayDateError ? "Date is required" : ""}
                 />
               </div>
               <div>
-                <SubmitButton onClick={() => handleLogActivity(day)}>
+                <SubmitButton onClick={() => onSubmitLog(day)}>
                   Log Day's Activity
                 </SubmitButton>
               </div>

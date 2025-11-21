@@ -11,7 +11,7 @@ const getSchedule = asyncHandler(async (req, res) => {
   console.log("AAAAAAAgetting schedule");
   const userId = req.user._id;
   const item = await Schedule.findOne({ user: userId });
-  //console.log("schedule: ", item);
+  console.log("schedule: ", item);
   res.json(item);
 });
 
@@ -45,13 +45,32 @@ const addSchedule = asyncHandler(async (req, res) => {
 });
 
 const updateSchedule = asyncHandler(async (req, res) => {
-  console.log("getting activity log");
+  console.log("updating schedule");
   const userId = req.user._id;
 
   const scheduleId = req.params.id;
   const item = await Schedule.findOne({ user: userId, _id: scheduleId });
+  try {
+    if (item) {
+      item.monday = req.body.schedule.monday || item.monday;
+      item.tuesday = req.body.schedule.tuesday || item.tuesday;
+      item.wednesday = req.body.schedule.wednesday || item.wednesday;
+      item.thursday = req.body.schedule.thursday || item.thursday;
+      item.friday = req.body.schedule.friday || item.friday;
+      item.saturday = req.body.schedule.saturday || item.saturday;
+      item.sunday = req.body.schedule.sunday || item.sunday;
 
-  res.json({ message: "Update schedule endpoint" });
+      const updatedItem = await item.save();
+
+      res.json(item);
+    } else {
+      res.status(404);
+      throw new Error("resource not found");
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error(error);
+  }
 });
 
 export { getSchedule, addSchedule, updateSchedule };

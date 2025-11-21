@@ -8,9 +8,13 @@ import { TextField, Button } from "@mui/material";
 import { useLoginMutation } from "../../slices/usersApiSlice";
 import { setCredentials } from "../../slices/authSlice";
 
+import { ToastContainer, toast } from "react-toastify";
+
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,7 +24,7 @@ export default function LoginScreen() {
   const { userInfo } = useSelector((state) => state.auth);
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
-  const redirect = sp.get("redirect") || "/";
+  const redirect = sp.get("redirect") || "/projects";
 
   useEffect(() => {
     if (userInfo) {
@@ -30,19 +34,39 @@ export default function LoginScreen() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      navigate(redirect);
-    } catch (err) {
-      //toast.error(err?.data?.message || err.error);
+
+    let valid = true;
+
+    if (password.trim() === "") {
+      valid = false;
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    }
+
+    if (email.trim() === "") {
+      valid = false;
+      setEmailError(true);
+    } else {
+      setEmailError(false);
+    }
+
+    if (valid) {
+      try {
+        const res = await login({ email, password }).unwrap();
+        dispatch(setCredentials({ ...res }));
+        navigate(redirect);
+      } catch (err) {
+        //toast.error(err?.data?.message || err.error);
+        toast.error("That email and password combination is not valid.");
+      }
     }
   };
 
   return (
     <div className="container">
+      <ToastContainer />
       <h1>Login</h1>
-
       <form onSubmit={submitHandler}>
         <TextField
           label="Email"
@@ -52,6 +76,8 @@ export default function LoginScreen() {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={emailError}
+          helperText={emailError ? "Email is required" : ""}
         />
         <TextField
           label="Password"
@@ -61,6 +87,8 @@ export default function LoginScreen() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          error={passwordError}
+          helperText={passwordError ? "Password is required" : ""}
         />
         <Button
           type="submit"

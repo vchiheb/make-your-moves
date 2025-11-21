@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-import Header from "./components/Header";
+import Header from "./components/UI/header/Header";
 
 import "./css/style-make-your-moves.css";
 

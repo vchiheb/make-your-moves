@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ProjectsContext } from "../../context/projects-context";
+import { ProjectsContext } from "../../../context/projects-context";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
@@ -10,14 +10,14 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 
-export default function ProjectToolbar({
-  project,
-  handleDeleteProject,
-  handleSaveProject,
-  handleArchiveProject,
-}) {
-  const { handleViewProjectArchive, handleEditProject } =
-    useContext(ProjectsContext);
+export default function ProjectToolbar({ project }) {
+  const {
+    handleViewProjectArchive,
+    handleEditProject,
+    handleDeleteProject,
+    handleSaveProject,
+    handleArchiveProject,
+  } = useContext(ProjectsContext);
 
   const [displayMenu, setDisplayMenu] = useState(false);
   return (

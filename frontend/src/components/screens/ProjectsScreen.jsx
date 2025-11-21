@@ -6,7 +6,7 @@ import { ProjectsContext } from "../../context/projects-context.jsx";
 
 import { ThemeProvider } from "@mui/material/styles";
 import customTheme from "../../theme.js";
-import Schedule from "../schedule/Schedule.js";
+import Schedule from "../features/activities/Schedule.js";
 import {
   useAddTimeLogMutation,
   useGetTimeLogsQuery,
@@ -57,18 +57,18 @@ import {
   resetDay,
 } from "../../slices/scheduleSlice.js";
 
-import Message from "../UI/Message.jsx";
-import Loader from "../UI/Loader.jsx";
+import Message from "../UI/elements/Message.jsx";
+import Loader from "../UI/elements/Loader.jsx";
 
-import ProjectsToolbar from "../toolbars/ProjectsToolbar.jsx";
-import ProjectDrawer from "../drawers/ProjectDrawer.jsx";
-import ScheduleDrawer from "../drawers/ScheduleDrawer.jsx";
-import GoalDrawer from "../drawers/GoalDrawer.jsx";
-import TaskDrawer from "../drawers/TaskDrawer.jsx";
-import TasksDrawer from "../drawers/TasksDrawer.jsx";
+import ProjectsToolbar from "../UI/toolbars/ProjectsToolbar.jsx";
+import ProjectDrawer from "../UI/drawers/ProjectDrawer.jsx";
+import ScheduleDrawer from "../UI/drawers/ScheduleDrawer.jsx";
+import GoalDrawer from "../UI/drawers/GoalDrawer.jsx";
+import TaskDrawer from "../UI/drawers/TaskDrawer.jsx";
+import TasksDrawer from "../UI/drawers/TasksDrawer.jsx";
 
-import Projects from "../Projects.jsx";
-import ProjectArchiveDrawer from "../drawers/ProjectArchiveDrawer.jsx";
+import Projects from "../features/projects/Projects.jsx";
+import ProjectArchiveDrawer from "../UI/drawers/ProjectArchiveDrawer.jsx";
 
 export default function ProjectsScreen() {
   const projectsCtxValue = {
@@ -150,6 +150,7 @@ export default function ProjectsScreen() {
   const [saveProjectGoalList] = useUpdateProjectGoalListMutation();
   const [updateProjectInDatabase] = useUpdateProjectMutation();
   const [addScheduleToDatabase] = useAddScheduleMutation();
+  const [updateScheduleInDatabase] = useUpdateScheduleMutation();
 
   const [addTimeLogEntry] = useAddTimeLogMutation();
   const [addActivityLogEntry] = useAddActivityLogMutation();
@@ -161,7 +162,6 @@ export default function ProjectsScreen() {
   });
 
   const { data: projects, isLoading, error } = useGetProjectsQuery();
-  //const { data: project, refetch } = useGetProjectQuery(currentProjectId);
 
   let stateData = useSelector((state) => {
     return state.project.projects;
@@ -173,27 +173,35 @@ export default function ProjectsScreen() {
   const project = useSelector((state) => {
     let proj = null;
     if (state.project && state.project.projects) {
-      console.log("project: ", state.project.projects);
       proj = state.project.projects.filter((p) => p._id === currentProjectId);
       return proj[0];
     }
     return proj;
   });
 
-  console.log("state: ", stateData);
-  console.log("currentProjectId: ", currentProjectId);
-  const { data: scheduleData } = useGetScheduleQuery();
+  const {
+    data: scheduleData,
+    loading: scheduleIsLoading,
+    error: scheduleError,
+  } = useGetScheduleQuery();
 
   let scheduleState = useSelector((state) => {
-    return state.schedule.schedule;
+    return state.schedule;
   });
 
-  if (!scheduleState) {
+  console.log("SHCEDULE DATA: ", scheduleData);
+  console.log("SCHEDULE STATE", scheduleState);
+
+  if (
+    scheduleState === null ||
+    scheduleState === "undefined" ||
+    scheduleState.schedule === null
+  ) {
+    console.log("schedule data is available: ", scheduleData);
     scheduleState = scheduleData;
     dispatch(addSchedule(scheduleData));
+    // else let the user know they haven't built their schedule
   }
-
-  console.log("scheduleState: ", scheduleState);
 
   const resetComponent = () => {
     setKey((prevKey) => prevKey + 1);
@@ -297,7 +305,8 @@ export default function ProjectsScreen() {
     resetComponent();
   }
 
-  function handleSaveGoalConfig() {
+  function handleSaveGoalConfig(goal) {
+    setGoal(goal);
     resetComponent();
   }
 
@@ -316,7 +325,6 @@ export default function ProjectsScreen() {
   }
 
   function handleSaveProjectDetails(projectDetails) {
-    console.log("PROJECT DETAILS TO SAVE: ", projectDetails);
     if (projectDetails) {
       updateProjectInDatabase(projectDetails);
       //refetch();
@@ -377,7 +385,20 @@ export default function ProjectsScreen() {
   async function handleBuildSchedule() {
     const schedule = new Schedule();
     schedule.buildSchedule(stateData);
-    const result = await addScheduleToDatabase({ schedule });
+    if (scheduleState && scheduleState._id) {
+      const result = await updateScheduleInDatabase({
+        schedule,
+        _id: scheduleState._id,
+      }).unwrap();
+      dispatch(addSchedule(result));
+      scheduleState = result;
+    } else {
+      const result = await addScheduleToDatabase({ schedule }).unwrap();
+      dispatch(addSchedule(result));
+      scheduleState = result;
+
+      window.location.reload();
+    }
   }
 
   function handleUpdateDayNote(note, dayTitle) {
@@ -660,6 +681,7 @@ export default function ProjectsScreen() {
 
   function handleArchiveGoal(goalId, projectId) {
     const payload = { _id: goalId, projectId: projectId };
+    console.log("payload: ", payload);
     // update in state
     dispatch(archiveGoal(payload));
 

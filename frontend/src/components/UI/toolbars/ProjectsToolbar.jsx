@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ProjectsContext } from "../../context/projects-context";
+import { ProjectsContext } from "../../../context/projects-context";
 
 import AddIcon from "@mui/icons-material/Add";
 import ScheduleIcon from "@mui/icons-material/Schedule";

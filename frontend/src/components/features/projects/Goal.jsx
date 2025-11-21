@@ -1,20 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { ProjectsContext } from "../../../context/projects-context";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-import ToolbarButton from "./UI/ToolbarButton";
+export default function Goal({ data, projectId }) {
+  const { handleArchiveGoal, handleDeleteGoal, handleOpenGoalDrawer } =
+    useContext(ProjectsContext);
 
-export default function Goal({
-  handleArchiveGoal,
-  handleDeleteGoal,
-  handleOpenGoalDrawer,
-  data,
-  projectId,
-}) {
   const [displayMenu, setDisplayMenu] = useState(false);
+  console.log("pid 1: ", projectId);
   return (
     <>
       {!data.archived && (

@@ -1,9 +1,9 @@
 import { useDispatch } from "react-redux";
 import { useContext, useState } from "react";
 
-import { ProjectsContext } from "../../context/projects-context";
+import { ProjectsContext } from "../../../context/projects-context";
 import { InputLabel, Select, MenuItem } from "@mui/material";
-import { saveGoalConfig } from "../../slices/projectSlice";
+import { saveGoalConfig } from "../../../slices/projectSlice";
 
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
@@ -12,7 +12,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
 import ProjectsDrawerToolbar from "../toolbars/ProjectDrawerToolbar";
-import SubmitButton from "../UI/SubmitButton";
+import SubmitButton from "../elements/SubmitButton";
 
 export default function GoalDrawer({ open, projectId, currentGoal }) {
   const { handleCloseGoalDrawer, handleSaveGoalList, handleSaveGoalConfig } =
@@ -21,7 +21,7 @@ export default function GoalDrawer({ open, projectId, currentGoal }) {
   const dispatch = useDispatch();
 
   const [title, setTitle] = useState(currentGoal.title);
-
+  const [titleError, setTitleError] = useState(false);
   const [duration, setDuration] = useState(currentGoal.duration);
   const [frequency, setFrequency] = useState(
     currentGoal && currentGoal.frequency ? currentGoal.frequency : ""
@@ -203,37 +203,47 @@ export default function GoalDrawer({ open, projectId, currentGoal }) {
   );
 
   function onSaveGoalConfig() {
-    const updatedGoal = {
-      _id: currentGoal._id,
-      title,
-      duration,
-      frequency,
-      timePeriod,
-      timeSlots: {
-        onWaking,
-        morning,
-        midday,
-        afternoon,
-        evening,
-        bedtime,
-      },
-      days: {
-        monday: monday ? { timeSlots: mondayTimeSlots } : "",
-        tuesday: tuesday ? { timeSlots: tuesdayTimeSlots } : "",
-        wednesday: wednesday ? { timeSlots: wednesdayTimeSlots } : "",
-        thursday: thursday ? { timeSlots: thursdayTimeSlots } : "",
-        friday: friday ? { timeSlots: fridayTimeSlots } : "",
-        saturday: saturday ? { timeSlots: saturdayTimeSlots } : "",
-        sunday: sunday ? { timeSlots: sundayTimeSlots } : "",
-      },
-    };
+    let valid = true;
 
-    const payload = { projectId, updatedGoal };
+    if (title.trim() === "") {
+      setTitleError(true);
+      valid = false;
+    } else {
+      setTitleError(false);
+    }
+    if (valid) {
+      const updatedGoal = {
+        _id: currentGoal._id,
+        title,
+        duration,
+        frequency,
+        timePeriod,
+        timeSlots: {
+          onWaking,
+          morning,
+          midday,
+          afternoon,
+          evening,
+          bedtime,
+        },
+        days: {
+          monday: monday ? { timeSlots: mondayTimeSlots } : "",
+          tuesday: tuesday ? { timeSlots: tuesdayTimeSlots } : "",
+          wednesday: wednesday ? { timeSlots: wednesdayTimeSlots } : "",
+          thursday: thursday ? { timeSlots: thursdayTimeSlots } : "",
+          friday: friday ? { timeSlots: fridayTimeSlots } : "",
+          saturday: saturday ? { timeSlots: saturdayTimeSlots } : "",
+          sunday: sunday ? { timeSlots: sundayTimeSlots } : "",
+        },
+      };
 
-    dispatch(saveGoalConfig(payload));
-    handleSaveGoalList(projectId, updatedGoal);
-    handleSaveGoalConfig();
-    handleCloseGoalDrawer();
+      const payload = { projectId, updatedGoal };
+
+      dispatch(saveGoalConfig(payload));
+      handleSaveGoalList(projectId, updatedGoal);
+      handleSaveGoalConfig(updatedGoal);
+      handleCloseGoalDrawer();
+    }
   }
   return (
     <>
@@ -261,6 +271,10 @@ export default function GoalDrawer({ open, projectId, currentGoal }) {
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
                           sx={{ width: "100%" }}
+                          error={titleError}
+                          helperText={
+                            titleError ? "Goal title is required" : ""
+                          }
                         />
                       </div>
                       <div style={{ flex: "1" }}>

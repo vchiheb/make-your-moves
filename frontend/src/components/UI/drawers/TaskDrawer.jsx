@@ -2,8 +2,8 @@ import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { useContext } from "react";
 
-import { ProjectsContext } from "../../context/projects-context";
-import { saveTaskConfig } from "../../slices/projectSlice";
+import { ProjectsContext } from "../../../context/projects-context";
+import { saveTaskConfig } from "../../../slices/projectSlice";
 
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
@@ -12,7 +12,7 @@ import TextareaAutosize from "@mui/material/TextareaAutosize";
 import InputLabel from "@mui/material/InputLabel";
 
 import ProjectDrawerToolbar from "../toolbars/ProjectDrawerToolbar";
-import SubmitButton from "../UI/SubmitButton";
+import SubmitButton from "../elements/SubmitButton";
 
 export default function TaskDrawer({ open, projectId, currentTask }) {
   const { handleCloseTaskDrawer, handleSaveTaskList } =
@@ -21,6 +21,7 @@ export default function TaskDrawer({ open, projectId, currentTask }) {
   const dispatch = useDispatch();
 
   const [title, setTitle] = useState(currentTask.title);
+  const [titleError, setTitleError] = useState(false);
   const [duration, setDuration] = useState(currentTask.duration);
   const [actualDuration, setActualDuration] = useState(
     currentTask.actualDuration
@@ -28,20 +29,30 @@ export default function TaskDrawer({ open, projectId, currentTask }) {
   const [notes, setNotes] = useState(currentTask.notes);
 
   function handleSaveTaskConfig() {
-    const updatedTask = {
-      _id: currentTask._id,
-      title,
-      duration,
-      notes,
-      actualDuration,
-      priority: currentTask.priority,
-    };
+    let valid = true;
 
-    const payload = { projectId, updatedTask };
+    if (title.trim() === "") {
+      setTitleError(true);
+      valid = false;
+    } else {
+      setTitleError(false);
+    }
+    if (valid) {
+      const updatedTask = {
+        _id: currentTask._id,
+        title,
+        duration,
+        notes,
+        actualDuration,
+        priority: currentTask.priority,
+      };
 
-    dispatch(saveTaskConfig(payload));
-    handleSaveTaskList(projectId, updatedTask);
-    handleCloseTaskDrawer();
+      const payload = { projectId, updatedTask };
+
+      dispatch(saveTaskConfig(payload));
+      handleSaveTaskList(projectId, updatedTask);
+      handleCloseTaskDrawer();
+    }
   }
   return (
     <>
@@ -69,6 +80,10 @@ export default function TaskDrawer({ open, projectId, currentTask }) {
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
                           sx={{ width: "100%" }}
+                          error={titleError}
+                          helperText={
+                            titleError ? "Task title is required" : ""
+                          }
                         />
                       </div>
 

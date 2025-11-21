@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useContext } from "react";
-import { ProjectsContext } from "../../context/projects-context";
+import { ProjectsContext } from "../../../context/projects-context";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -10,13 +10,13 @@ import { Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 
-import SubmitButton from "../UI/SubmitButton";
+import SubmitButton from "../elements/SubmitButton";
 import {
   useUploadProductImageMutation,
   useAddProjectMutation,
-} from "../../slices/projectApiSlice";
+} from "../../../slices/projectApiSlice";
 import { useDispatch } from "react-redux";
-import { addProject } from "../../slices/projectSlice";
+import { addProject } from "../../../slices/projectSlice";
 
 export default function ProjectEditForm({
   projectId,

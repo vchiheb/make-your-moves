@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { current } from "@reduxjs/toolkit";
 
 import sortByTitle from "../utils/sort.js";
-import ProjectToolbar from "../components/toolbars/ProjectToolbar.jsx";
+import ProjectToolbar from "../components/UI/toolbars/ProjectToolbar.jsx";
 
 const initialState = localStorage.getItem("projects")
   ? JSON.parse(localStorage.getItem("projects"))
@@ -38,7 +38,6 @@ const projectSlice = createSlice({
     },
     addProject: (state, action) => {
       const newProject = action.payload;
-      console.log("new project: ", newProject);
       const newState = { ...state, projects: [...state.projects, newProject] };
       newState.projects.sort((a, b) => sortByTitle(a, b));
       localStorage.setItem("projects", JSON.stringify(newState));
@@ -46,12 +45,10 @@ const projectSlice = createSlice({
     },
     updateProject: (state, action) => {
       const projectDetails = action.payload;
-      console.log("updating project: ", projectDetails);
       const newState = {
         ...state,
         projects: state.projects.map((proj) => {
           if (proj._id === projectDetails._id) {
-            console.log("found a match");
             return projectDetails;
           }
           return proj;
@@ -70,13 +67,11 @@ const projectSlice = createSlice({
       return state;
     },
     addGoal: (state, action) => {
-      console.log("add goal, action payload", action.payload);
       const projectId = action.payload.projectId;
       const goalItem = { _id: action.payload._id, title: action.payload.title };
       const newState = {
         projects: state.projects.map((proj) => {
           if (proj._id === projectId) {
-            console.log("adding new goal");
             if (proj.goals) {
               return {
                 ...proj,
@@ -92,7 +87,6 @@ const projectSlice = createSlice({
         }),
       };
 
-      console.log("add goal updated state, ", newState);
       localStorage.setItem("projects", JSON.stringify(newState));
       return newState;
     },
@@ -126,7 +120,6 @@ const projectSlice = createSlice({
       const projectId = action.payload.projectId;
       const goal = action.payload.updatedGoal;
       const goalId = goal._id;
-      console.log("goal: ", goal);
       const newState = {
         ...state,
         projects: state.projects.map((proj) => {
@@ -151,7 +144,6 @@ const projectSlice = createSlice({
       return newState;
     },
     deleteGoal: (state, action) => {
-      console.log("payload: ", action.payload);
       const projectId = action.payload.projectId;
       const goalId = action.payload._id;
 
@@ -170,7 +162,6 @@ const projectSlice = createSlice({
       return newState;
     },
     unarchiveGoal: (state, action) => {
-      console.log("payload: ", action.payload);
       const projectId = action.payload.projectId;
       const goalId = action.payload._id;
       const now = new Date();
@@ -199,7 +190,6 @@ const projectSlice = createSlice({
       return newState;
     },
     archiveGoal: (state, action) => {
-      console.log("payload: ", action.payload);
       const projectId = action.payload.projectId;
       const goalId = action.payload._id;
       const now = new Date();
@@ -228,7 +218,6 @@ const projectSlice = createSlice({
       return newState;
     },
     unarchiveTask: (state, action) => {
-      console.log("payload: ", action.payload);
       const projectId = action.payload.projectId;
       const taskId = action.payload._id;
       const now = new Date();
@@ -257,7 +246,6 @@ const projectSlice = createSlice({
       return newState;
     },
     archiveTask: (state, action) => {
-      console.log("payload: ", action.payload);
       const projectId = action.payload.projectId;
       const taskId = action.payload._id;
       const now = new Date();
@@ -286,7 +274,6 @@ const projectSlice = createSlice({
       return newState;
     },
     addTask: (state, action) => {
-      console.log("add task, action payload", action.payload);
       const projectId = action.payload.projectId;
       const taskItem = { _id: action.payload._id, title: action.payload.title };
       const newState = {
@@ -329,7 +316,6 @@ const projectSlice = createSlice({
       const projectId = action.payload.projectId;
       const task = action.payload.updatedTask;
       const taskId = task._id;
-      console.log("task: ", task);
       const newState = {
         ...state,
         projects: state.projects.map((proj) => {
@@ -377,7 +363,6 @@ const projectSlice = createSlice({
       return newState;
     },
     deleteTask: (state, action) => {
-      console.log("payload: ", action.payload);
       const projectId = action.payload.projectId;
       const taskId = action.payload._id;
 
@@ -431,7 +416,6 @@ const projectSlice = createSlice({
             }
           }),
         };
-        console.log(current(state));
         localStorage.setItem("chapters", JSON.stringify(newState));
         return newState;
       }
@@ -439,7 +423,6 @@ const projectSlice = createSlice({
     deleteContentItem: (state, action) => {
       const contentItemId = action.payload.contentItemId;
       const chapterId = action.payload.chapterId;
-      console.log("deleting: ", contentItemId, " from chapter ", chapterId);
       const newState = {
         ...state,
         chapters: state.chapters.map((chapt) => {
@@ -455,7 +438,6 @@ const projectSlice = createSlice({
           }
         }),
       };
-      console.log("newstate", newState);
       localStorage.setItem("chapters", JSON.stringify(newState));
       return newState;
     },
@@ -465,7 +447,6 @@ const projectSlice = createSlice({
       const chapterId = action.payload.chapterId;
       const contentId = action.payload.contentId;
       const contentType = action.payload.contentType;
-      console.log("CONTENT: ", contentText, " ID: ", contentId);
       if (contentId) {
         const newState = {
           ...state,
@@ -474,7 +455,6 @@ const projectSlice = createSlice({
               const newChapter = {
                 ...chapt,
                 content: chapt.content.map((cont) => {
-                  console.log("id: ", cont._id, " content id: ", contentId);
                   if (cont._id === contentId) {
                     return { ...cont, text: contentText };
                   }
@@ -492,7 +472,6 @@ const projectSlice = createSlice({
           }),
         };
 
-        console.log("NEW STATE:", newState);
         localStorage.setItem("chapters", JSON.stringify(newState));
         return newState;
       }
